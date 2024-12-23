@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">GarageApp</string>
+    <string name="customer">Customer</string>
+    <string name="employee">Employee</string>
+    <string name="create_new_account">Create new Account</string>
+    <string name="logo">Logo</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="username">Username</string>
+    <string name="next">Next</string>
+    <string name="login">Login</string>
+    <string name="haveAccount">You already have an Account?</string>
+    <string name="registration_form">Registration Form</string>
+    <string name="password">Password</string>
+    <string name="please_fill_the_form">Please fill the Form</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="create_account">Create Account</string>
+</resources>
