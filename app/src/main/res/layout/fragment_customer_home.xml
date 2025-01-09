@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFFFFF"
+    tools:context=".CustomerFragments.CustomerHomeFragment">
+
+    <!-- Include Toolbar -->
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- RecyclerView for car list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/include_toolbar"
+        android:layout_above="@id/add_car_button"
+        android:padding="16dp" />
+
+    <!-- Image for No Cars -->
+    <ImageView
+        android:id="@+id/no_cars_image"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/no_car_image" />
+
+    <!-- Text for No Cars -->
+    <TextView
+        android:id="@+id/no_cars_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/no_cars_image"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:text="Tap + button to add your first car"
+        android:textSize="16sp"
+        android:textColor="#194D78"
+        android:gravity="center"
+        android:layout_marginTop="16dp" />
+
+    <!-- Floating Action Button -->
+    <Button
+        android:id="@+id/add_car_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="86dp"
+        android:backgroundTint="#496B87"
+        android:elevation="6dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="+"
+        android:textColor="#FFFFFF" />
+
+</RelativeLayout>

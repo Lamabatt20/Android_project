@@ -16,4 +16,28 @@
     <string name="please_fill_the_form">Please fill the Form</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="create_account">Create Account</string>
+    <string name="identity_number">Identity Number</string>
+    <string name="authorization_code">Authorization Code</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile">Profile</string>
+    <string name="report">Report</string>
+    <string name="notifications">Notifications</string>
+    <string name="home">Home</string>
+    <string name="title_reports">Report</string>
+    <string name="add_service">Add Service</string>
+    <string name="service_name">Service Name</string>
+    <string name="price">Price</string>
+    <string name="estimated_time">Estimated Time</string>
+    <string name="submit_service">Add Service</string>
+    <string name="number_of_employees">Number of Employees:\n</string>
+    <string name="number_of_customers">Number of Customers:\n</string>
+    <string name="total_revenue">Total Revenue:\n\n</string>
+    <string name="total_profit">Total Profit:\n\n</string>
+    <string name="employee_of_the_month">Employee of the Month:\n</string>
+    <string name="customer_of_the_month">Customer of the Month:\n</string>
 </resources>
