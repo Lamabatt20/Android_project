@@ -14,6 +14,10 @@ public class Order {
         return serviceId;
     }
 
+    public Order(int orderId) {
+        this.orderId = orderId;
+    }
+
     public int getCarId() {
         return carId;
     }

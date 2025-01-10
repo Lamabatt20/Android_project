@@ -1,6 +1,7 @@
 package com.example.garageapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     @Override
     public void onBindViewHolder(CarViewHolder holder, int position) {
         Car car = carList.get(position);
+
+        Log.d("CarAdapter", "Binding car: " + car.getCars_name() + ", Photo: " + car.getPhoto());
 
         // Bind data to views
         Glide.with(context)

@@ -46,6 +46,7 @@ public class OrderDetail extends AppCompatActivity {
 
         // Retrieve the customer ID passed via intent
         customerId = getIntent().getIntExtra("customer_id", -1);
+        int orderId = getIntent().getIntExtra("order_id", -1);
 
         if (customerId != -1) {
             fetchOrderDetails(customerId);

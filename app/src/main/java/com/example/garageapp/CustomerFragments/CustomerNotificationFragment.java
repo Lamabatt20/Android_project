@@ -1,7 +1,6 @@
 package com.example.garageapp.CustomerFragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,11 +38,7 @@ public class CustomerNotificationFragment extends Fragment {
     private RequestQueue requestQueue;
     private static final String BASE_URL = "http://192.168.1.108/public_html/Android/Customerphp/Notification.php";
     private int customerId;
-    private static final String PREF_NAME = "GarageAppPreferences";
 
-    public CustomerNotificationFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,78 +46,83 @@ public class CustomerNotificationFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_customer_notification, container, false);
 
-        // Getting customer ID from the arguments
-        if (getArguments() != null) {
-            customerId = getArguments().getInt("customer_id", -1);
-        }
-
-        if (customerId == -1) {
-            Toast.makeText(getContext(), "Invalid customer ID", Toast.LENGTH_SHORT).show();
-            return rootView;
-        }
-
         // Initialize RecyclerView
         notificationRecyclerView = rootView.findViewById(R.id.reminders_list_recycler_view);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize order list and RequestQueue
-        requestQueue = Volley.newRequestQueue(getContext());
+        notificationAdapter = new CustomerNotificationAdapter(getContext(), orders);
+        notificationRecyclerView.setAdapter(notificationAdapter);
 
-        // Load orders
-        loadItems(rootView);
+        // Getting customer ID from the arguments
+        if (getArguments() != null) {
+            customerId = getArguments().getInt("customer_id", -1);
+            if (customerId != -1) {
+                // Load orders if valid customer ID
+                if (orders.isEmpty()) {  // Only load if orders are empty
+                    loadItems(rootView);
+                } else {
+                    updateUI(rootView);  // Skip loading if data is already available
+                }
+            } else {
+                Toast.makeText(getContext(), "Invalid customer ID", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         return rootView;
     }
 
     private void loadItems(View rootView) {
-        // First, try to load orders from SharedPreferences
-        List<Order> savedOrders = getOrdersFromSharedPreferences(getContext());
-        if (savedOrders != null && !savedOrders.isEmpty()) {
-            orders.clear();
-            orders.addAll(savedOrders);
-            updateUI(rootView);
-        } else {
-            // If no saved orders, load them from the server
-            String url = BASE_URL + "?customer_id=" + customerId;
+        // Clear the orders list before adding new data
+        orders.clear();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONArray array = new JSONArray(response);
-                                for (int i = 0; i < array.length(); i++) {
-                                    JSONObject object = array.getJSONObject(i);
-                                    int orderId = object.getInt("order_id");
-                                    int serviceId = object.getInt("service_id");
-                                    int carId = object.getInt("car_id");
-                                    String serviceName = object.getString("service_name");
-                                    String carName = object.getString("car_name");
-                                    String state = object.getString("state");
-                                    String orderDate = object.getString("order_date");
+        String url = BASE_URL + "?customer_id=" + customerId;
 
-                                    Order order = new Order(orderId, serviceId, carId, state, serviceName, carName, orderDate);
-                                    orders.add(order);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // Process response and add to orders list
+                            JSONArray array = new JSONArray(response);
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                int orderId = object.getInt("order_id");
+                                int serviceId = object.getInt("service_id");
+                                int carId = object.getInt("car_id");
+                                String serviceName = object.getString("service_name");
+                                String carName = object.getString("car_name");
+                                String state = object.getString("state");
+                                String orderDate = object.getString("order_date");
+
+                                Order order = new Order(orderId, serviceId, carId, state, serviceName, carName, orderDate);
+                                orders.add(order);
                             }
-                            // Save the orders to SharedPreferences after loading from the server
-                            saveOrdersToSharedPreferences(getContext(), orders);
-                            updateUI(rootView);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e("CustomerNotificationFragment", "Error: " + error.toString());
-                            Toast.makeText(getContext(), "Failed to load orders", Toast.LENGTH_LONG).show();
-                        }
-                    });
 
-            requestQueue.add(stringRequest);
-        }
+                        // Make sure updateUI is run on the main thread
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateUI(rootView);  // Update RecyclerView after loading data
+                            }
+                        });
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("CustomerNotificationFragment", "Error: " + error.toString());
+                        Toast.makeText(getContext(), "Failed to load orders", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        // Add the request to the Volley queue
+        requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
     }
+
 
     private void updateUI(View rootView) {
         ImageView noDataImage = rootView.findViewById(R.id.no_data_image);
@@ -137,65 +137,9 @@ public class CustomerNotificationFragment extends Fragment {
             noDataImage.setVisibility(View.GONE);
             text.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            notificationAdapter.notifyDataSetChanged();
 
-            if (notificationAdapter == null) {
-                notificationAdapter = new CustomerNotificationAdapter(getContext(), orders);
-                recyclerView.setAdapter(notificationAdapter);
-            } else {
-                notificationAdapter.notifyDataSetChanged();
-            }
+
         }
-    }
-
-    // Save orders to SharedPreferences
-    private void saveOrdersToSharedPreferences(Context context, List<Order> orders) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        try {
-            JSONArray jsonArray = new JSONArray();
-            for (Order order : orders) {
-                JSONObject orderObject = new JSONObject();
-                orderObject.put("order_id", order.getOrderId());
-                orderObject.put("service_id", order.getServiceId());
-                orderObject.put("car_id", order.getCarId());
-                orderObject.put("service_name", order.getServiceName());
-                orderObject.put("car_name", order.getCarName());
-                orderObject.put("state", order.getState());
-                orderObject.put("order_date", order.getOrderDate());
-                jsonArray.put(orderObject);
-            }
-            editor.putString("orders_data", jsonArray.toString());
-            editor.apply();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Get orders from SharedPreferences
-    private List<Order> getOrdersFromSharedPreferences(Context context) {
-        List<Order> orders = new ArrayList<>();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String ordersJson = sharedPreferences.getString("orders_data", "[]");
-
-        try {
-            JSONArray jsonArray = new JSONArray(ordersJson);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject orderObject = jsonArray.getJSONObject(i);
-                int orderId = orderObject.getInt("order_id");
-                int serviceId = orderObject.getInt("service_id");
-                int carId = orderObject.getInt("car_id");
-                String serviceName = orderObject.getString("service_name");
-                String carName = orderObject.getString("car_name");
-                String state = orderObject.getString("state");
-                String orderDate = orderObject.getString("order_date");
-
-                Order order = new Order(orderId, serviceId, carId, state, serviceName, carName, orderDate);
-                orders.add(order);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return orders;
     }
 }

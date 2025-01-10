@@ -76,6 +76,7 @@ public class HomeEmployee extends Fragment {
             Customer clickedCustomer = customerList.get(position);
             Intent intent = new Intent(getActivity(), OrderDetail.class);
             intent.putExtra("customer_id", clickedCustomer.getId()); // Pass customer_id
+            intent.putExtra("order_id", clickedCustomer.getOrderId());
             startActivity(intent);
         });
         recyclerView.setAdapter(customerAdapter);

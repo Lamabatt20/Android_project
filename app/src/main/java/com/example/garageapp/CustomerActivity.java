@@ -1,5 +1,6 @@
 package com.example.garageapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class CustomerActivity extends AppCompatActivity {
     CustomerNotificationFragment customerNotificationFragment = new CustomerNotificationFragment();
     CustomerProfileFragment customerProfileFragment = new CustomerProfileFragment();
 
-    @Override
+    @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -49,19 +50,19 @@ public class CustomerActivity extends AppCompatActivity {
         });
 
         bottomNavigationView = findViewById(R.id.bottom_nav3);
-        getSupportFragmentManager().beginTransaction().replace(R.id.main,customerHomeFragment ).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main,customerHomeFragment).commit();
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.homesc) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerHomeFragment).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerHomeFragment).addToBackStack(null).commit();
                     return true;
                 } else if (item.getItemId() == R.id.notificationsC) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerNotificationFragment).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerNotificationFragment).addToBackStack(null).commit();
                     return true;
                 } else if (item.getItemId() == R.id.profilesC) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerProfileFragment).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerProfileFragment).addToBackStack(null).commit();
                     return true;
                 } else {
                     return false;

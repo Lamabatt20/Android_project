@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,10 +149,9 @@ public class CustomerProfileFragment extends Fragment {
 
         String imageUrl = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        String url = "http://192.168.1.108/public_html/Android/Customerphp/updateUserProfile.php";
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/UpdateUserProfile.php";
 
         try {
-
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_id", userId);
             jsonBody.put("username", updatedUsername);
@@ -169,13 +169,11 @@ public class CustomerProfileFragment extends Fragment {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                boolean success = response.getBoolean("success");
-                                if (success) {
-                                    Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    String message = response.getString("message");
-                                    Toast.makeText(getContext(), "Failed to update: " + message, Toast.LENGTH_SHORT).show();
-                                }
+                                Log.d("UpdateResponse", "Response: " + response.toString());  // Log the response for debugging
+
+                                String successMessage = response.getString("success");  // Get the success message
+                                Toast.makeText(getContext(), successMessage, Toast.LENGTH_SHORT).show();  // Show the success message
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), "Response parsing error", Toast.LENGTH_SHORT).show();

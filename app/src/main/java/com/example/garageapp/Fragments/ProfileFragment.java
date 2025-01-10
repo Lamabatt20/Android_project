@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment {
 
         String imageUrl = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        String url = "http://192.168.1.108/public_html/android/customerphp/updateUserProfile.php";
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/updateUserProfile.php";
 
         try {
 
