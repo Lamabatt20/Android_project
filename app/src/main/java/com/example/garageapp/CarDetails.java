@@ -60,6 +60,9 @@ public class CarDetails extends AppCompatActivity {
 
         fetchCarData(carID);
 
+
+
+
         selectNewServiceButton.setOnClickListener(view -> {
             Intent intent = new Intent(CarDetails.this, SelectServiceActivity.class);
             intent.putExtra("carName", carName);
@@ -68,7 +71,7 @@ public class CarDetails extends AppCompatActivity {
     }
 
     private void fetchCarData(String carNumber) {
-        String url = "http://10.0.2.2//public_html/Android/Customerphp/get_car.php?car_number=" + carNumber;
+        String url = "http://192.168.1.108//public_html/Android/Customerphp/get_car.php?car_number=" + carNumber;
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -79,9 +82,10 @@ public class CarDetails extends AppCompatActivity {
                             return;
                         }
 
-                        carName = response.getString("company");
+                        carName = response.getString("cars_name");
                         toolbar_title.setText(carName);
                         carModel.setText(response.getString("model"));
+                        String carPhotoUrl = response.getString("photo");
                         carEngine.setText(response.getString("engine_specification"));
                         carYear.setText(response.getString("year"));
                         carOdometer.setText(response.getString("odometer"));
@@ -91,7 +95,7 @@ public class CarDetails extends AppCompatActivity {
                         for (int i = 0; i < historyArray.length(); i++) {
                             JSONObject historyItem = historyArray.getJSONObject(i);
                             history.append("- " + historyItem.getString("notes") +
-                                    "   Done with date   " + historyItem.getString("date") + "\n");
+                                    "   Done with date " + historyItem.getString("date") + "\n");
                         }
 
                         JSONArray servicesArray = response.getJSONArray("services");
@@ -103,8 +107,11 @@ public class CarDetails extends AppCompatActivity {
                             addServiceButton(note, orderID);
                         }
 
-                        String imageUrl = "http://192.168.1.102/" + response.getString("photo");
-                        Glide.with(CarDetails.this).load(imageUrl).into(carImage);
+                        Glide.with(CarDetails.this)
+                                .load(carPhotoUrl)
+                                .into(carImage);
+
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -138,7 +145,7 @@ public class CarDetails extends AppCompatActivity {
     }
 
     private void deleteServiceFromDatabase(String orderID) {
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/delete_service.php";
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/delete_service.php";
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject jsonParams = new JSONObject();
 

@@ -23,7 +23,7 @@ public class ServiceActivity extends AppCompatActivity {
     private TextInputEditText edtServiceName, edtPrice, edtEstimatedTime;
     private ImageView back_button;
 
-    private static final String PHP_URL = "http://172.19.33.199/public_html/Android/add_service.php";  // Replace with your PHP file URL
+    private static final String PHP_URL = "http://192.168.1.108/public_html/Android/add_service.php";  // Replace with your PHP file URL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

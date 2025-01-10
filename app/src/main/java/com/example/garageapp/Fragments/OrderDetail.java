@@ -56,7 +56,7 @@ public class OrderDetail extends AppCompatActivity {
 
     private void fetchOrderDetails(int customerId) {
         // URL of the PHP endpoint that returns order details for the given customer ID
-        String url = "http://172.19.33.199/public_html/Android/detaileddashboard.php?customer_id=" + customerId;
+        String url = "http://192.168.1.108/public_html/Android/detaileddashboard.php?customer_id=" + customerId;
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);

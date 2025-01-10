@@ -56,7 +56,7 @@ public class ReportFragment extends Fragment {
     }
 
     private void fetchData() {
-        String url = "http://172.19.33.199/public_html/Android/report.php";
+        String url = "http://192.168.1.108/public_html/Android/report.php";
 
         // Initialize Volley request queue
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
@@ -81,8 +81,8 @@ public class ReportFragment extends Fragment {
                             String customerName = topCustomer.getString("customer_name");
                             String customerPhotoUrl = topCustomer.getString("photo");
                             int customerOrders = topCustomer.getInt("total_orders");
-                            String fullImageUrl = "http://172.19.33.199" + employeePhotoUrl;
-                            String fullImageUrl2 = "http://172.19.33.199" + customerPhotoUrl;
+                            String fullImageUrl = "http://192.168.1.108" + employeePhotoUrl;
+                            String fullImageUrl2 = "http://192.168.1.108" + customerPhotoUrl;
 
                             // Parse general details
                             int totalCustomers = response.getInt("total_customers");

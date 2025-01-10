@@ -5,6 +5,19 @@ public class Order {
     private int serviceId;
     private int carId;
     private String state;
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public int getCarId() {
+        return carId;
+    }
+
     private String serviceName;
     private String carName;
     private String orderDate;

@@ -71,11 +71,13 @@
     app:layout_constraintTop_toBottomOf="@+id/edttext2" />
 
     <TextView
+        android:id="@+id/create_account_text"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="304dp"
         android:textAlignment="center"
         android:text="No account? Create new account"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

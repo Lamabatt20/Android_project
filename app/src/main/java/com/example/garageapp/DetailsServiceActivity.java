@@ -74,7 +74,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
     }
 
     private void fetchServiceDetails(String serviceName) {
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/get_service_details.php?service_name=" + serviceName;
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/get_service_details.php?service_name=" + serviceName;
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -91,7 +91,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
     }
 
     private void addServiceToDatabase(String Tarekh, String note, String carID, String price, String estimatedTime, String serviceName) {
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/add_service.php";
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/add_service.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -193,7 +193,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
 
     }
     private void deleteServiceFromDatabase(String order_id) {
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/delete_service.php";
+        String url = "http://192.168.1.108/public_html/Android/Customerphp/delete_service.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

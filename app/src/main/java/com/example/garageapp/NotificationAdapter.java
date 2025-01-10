@@ -70,7 +70,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private void markOrderAsComplete(int orderId, NotificationViewHolder holder) {
-        String url = "http://172.19.33.199/public_html/Android/updateOrder.php";
+        String url = "http://192.168.1.108/public_html/Android/updateOrder.php";
 
         // Retrieve employee_id from SharedPreferences
         SharedPreferences sharedPreferences = context.getSharedPreferences("RepairApp", Context.MODE_PRIVATE);

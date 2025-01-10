@@ -108,7 +108,7 @@ public class Registration extends AppCompatActivity {
     }
 
     private void validateAuthorizationCode(String authorization, Consumer<Boolean> callback) {
-        String url = "http://172.19.33.199/public_html/Android/validate_auth_code.php";
+        String url = "http://192.168.1.108/public_html/Android/validate_auth_code.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

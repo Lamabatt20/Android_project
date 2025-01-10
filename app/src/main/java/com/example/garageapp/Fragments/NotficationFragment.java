@@ -55,7 +55,7 @@ public class NotficationFragment extends Fragment {
     }
 
     private void fetchNotifications() {
-        String url = "http://172.19.33.199/public_html/Android/notification.php";
+        String url = "http://192.168.1.108/public_html/Android/notification.php";
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {

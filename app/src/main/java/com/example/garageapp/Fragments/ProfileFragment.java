@@ -79,7 +79,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadUserProfile(int userId, String role) {
-        String url = "http://172.19.33.199/public_html/android/customerphp/getUserProfile.php?user_id=" + userId;
+        String url = "http://192.168.1.108/public_html/android/customerphp/getUserProfile.php?user_id=" + userId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment {
 
         String imageUrl = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        String url = "http://172.19.33.199/public_html/android/customerphp/updateUserProfile.php";
+        String url = "http://192.168.1.108/public_html/android/customerphp/updateUserProfile.php";
 
         try {
 
