@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class AddCarActivity extends AppCompatActivity {
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Customerphp/add_car.php";
+    private static final String BASE_URL = "http://10.0.2.2/public_html/Android/Customerphp/add_car.php";
     private int customerId;  // To hold the customer ID
     private Uri selectedImageUri;  // To hold the URI of the selected image
 

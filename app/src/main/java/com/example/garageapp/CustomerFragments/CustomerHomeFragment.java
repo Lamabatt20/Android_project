@@ -41,7 +41,7 @@ public class CustomerHomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private CarAdapter adapter;
     private int customerId;
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Customerphp/car.php";
+    private static final String BASE_URL = "http://10.0.2.2/public_html/Android/Customerphp/car.php";
     private ActivityResultLauncher<Intent> addCarActivityLauncher;
     private ImageView imageno;
     private TextView text;

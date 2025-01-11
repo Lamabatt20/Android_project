@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -60,5 +61,8 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.glide)
+    implementation("com.android.support:recyclerview-v7:28.0.0")
+    implementation("com.android.support:cardview-v7:28.0.0")
+
     annotationProcessor(libs.compiler)
 }

@@ -35,7 +35,7 @@ public class CustomerNotificationFragment extends Fragment {
     private CustomerNotificationAdapter notificationAdapter;
     private List<Order> orders = new ArrayList<>();
     private RequestQueue requestQueue;
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Cutomerphp/Notification.php";
+    private static final String BASE_URL = "http://10.0.2.2/public_html/Android/Cutomerphp/Notification.php";
     private int customerId;
 
     public CustomerNotificationFragment() {

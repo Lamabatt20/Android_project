@@ -93,7 +93,7 @@ public class Registartion2 extends AppCompatActivity {
 
     private void registerUser(String name, String email, String phone, String authorization, String role,
                               String username, String identity, String password) {
-        String url = "http://172.19.33.199/public_html/Android/register.php";  // Adjust the URL as needed
+        String url = "http://10.0.2.2/public_html/Android/register.php";  // Adjust the URL as needed
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
