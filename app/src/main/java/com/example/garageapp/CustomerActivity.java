@@ -1,7 +1,9 @@
 package com.example.garageapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,11 +24,25 @@ public class CustomerActivity extends AppCompatActivity {
     CustomerNotificationFragment customerNotificationFragment = new CustomerNotificationFragment();
     CustomerProfileFragment customerProfileFragment = new CustomerProfileFragment();
 
-    @Override
+    @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_customer);
+        int customerId = getIntent().getIntExtra("customer_id", -1);
+        int userId=getIntent().getIntExtra("user_id", -1);
+        String role=getIntent().getStringExtra("role");
+        if (customerId == -1) {
+            Toast.makeText(this, "Invalid Customer ID", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("customer_id", customerId);
+        bundle.putInt("user_id",userId);
+        bundle.putString("role",role);
+        customerHomeFragment.setArguments(bundle);
+        customerNotificationFragment.setArguments(bundle);
+        customerProfileFragment.setArguments(bundle);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -34,19 +50,19 @@ public class CustomerActivity extends AppCompatActivity {
         });
 
         bottomNavigationView = findViewById(R.id.bottom_nav3);
-        getSupportFragmentManager().beginTransaction().replace(R.id.main,customerHomeFragment ).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main,customerHomeFragment).commit();
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                if (item.getItemId() == R.id.homes) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerHomeFragment).commit();
+                if (item.getItemId() == R.id.homesc) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerHomeFragment).addToBackStack(null).commit();
                     return true;
-                } else if (item.getItemId() == R.id.notifications) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerNotificationFragment).commit();
+                } else if (item.getItemId() == R.id.notificationsC) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerNotificationFragment).addToBackStack(null).commit();
                     return true;
-                } else if (item.getItemId() == R.id.profiles) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerProfileFragment).commit();
+                } else if (item.getItemId() == R.id.profilesC) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main, customerProfileFragment).addToBackStack(null).commit();
                     return true;
                 } else {
                     return false;

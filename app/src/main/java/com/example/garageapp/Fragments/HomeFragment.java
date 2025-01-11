@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchCustomerData() {
-        String url = "http://10.0.2.2/public_html/Android/dashboard.php";
+        String url = "http://172.19.33.199/public_html/Android/dashboard.php";
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
 

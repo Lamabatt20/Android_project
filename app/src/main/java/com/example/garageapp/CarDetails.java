@@ -138,7 +138,7 @@ public class CarDetails extends AppCompatActivity {
     }
 
     private void deleteServiceFromDatabase(String orderID) {
-        String url = "http://10.0.2.2/public_html/Android/Customerphp/delete_service.php";
+        String url = "http://172.19.33.199/public_html/Android/Customerphp/delete_service.php";
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject jsonParams = new JSONObject();
 

@@ -33,6 +33,13 @@ public class dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
+        int userId=getIntent().getIntExtra("user_id", -1);
+        String role=getIntent().getStringExtra("role");
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("user_id",userId);
+        bundle.putString("role",role);
+        profileFragment.setArguments(bundle);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

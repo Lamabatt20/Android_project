@@ -31,7 +31,7 @@ public class Login extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private static final String BASE_URL = "http://10.0.2.2/public_html/Android/login.php";
+    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
