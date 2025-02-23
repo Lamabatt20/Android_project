@@ -25,7 +25,8 @@ public class SelectServiceActivity extends AppCompatActivity {
     private RecyclerView recycler;
     private TextView tvTitle;
     private TextView toolbar_title;
-    private static final String BASE_URL = "http://1172.19.33.199/public_html/Android/Customerphp/get_menu.php";
+    private String pathurl= "http://172.19.33.18";
+    private final String BASE_URL = pathurl+"/public_html/Android/Customerphp/get_menu.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

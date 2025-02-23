@@ -31,8 +31,10 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private CustomerAdapter customerAdapter;
     private List<Customer> customerList;
+    private List<Customer> filteredList;
     private EditText searchBar;
     private Button addServiceButton;
+    private String pathurl = "http://172.19.33.18";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,11 +49,18 @@ public class HomeFragment extends Fragment {
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customerList = new ArrayList<>();
-        customerAdapter = new CustomerAdapter(customerList, position -> {
+        filteredList = new ArrayList<>(); // Initialize filtered list
+        customerAdapter = new CustomerAdapter(filteredList, position -> {
             // Handle item click to navigate to OrderDetail
-            Customer clickedCustomer = customerList.get(position);
+            Customer clickedCustomer = filteredList.get(position); // Get the customer from the filtered list
             Intent intent = new Intent(getActivity(), OrderDetail.class);
             intent.putExtra("customer_id", clickedCustomer.getId()); // Pass customer_id
+            intent.putExtra("order_id", clickedCustomer.getOrderId());
+            intent.putExtra("service_id", clickedCustomer.getServiceId());
+            intent.putExtra("state", clickedCustomer.getState());
+            intent.putExtra("states_date", clickedCustomer.getStatesDate());
+            intent.putExtra("order_date", clickedCustomer.getOrderDate());
+            intent.putExtra("total_amount", clickedCustomer.getTotalAmount());
             startActivity(intent);
         });
         recyclerView.setAdapter(customerAdapter);
@@ -68,7 +77,8 @@ public class HomeFragment extends Fragment {
         // Set up search bar listener
         searchBar.addTextChangedListener(new android.text.TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
@@ -76,14 +86,15 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(android.text.Editable editable) {}
+            public void afterTextChanged(android.text.Editable editable) {
+            }
         });
 
         return view;
     }
 
     private void fetchCustomerData() {
-        String url = "http://172.19.33.199/public_html/Android/dashboard.php";
+        String url = pathurl + "/public_html/Android/dashboard.php";
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
 
@@ -98,12 +109,21 @@ public class HomeFragment extends Fragment {
                                 int customerId = order.getInt("customer_id");
                                 String customerName = order.getString("customer_name");
                                 String serviceName = order.getString("service_name");
-                                customerList.add(new Customer(customerId, customerName, serviceName));
+                                int orderId = order.getInt("order_id");
+
+                                int serviceId = order.getInt("service_id");
+                                String state = order.getString("state");
+                                String statesDate = order.getString("states_date");
+                                String orderDate = order.getString("order_date");
+                                double totalAmount = order.getDouble("total_amount");
+
+                                customerList.add(new Customer(customerId, customerName, serviceName, orderId, serviceId, state, statesDate, orderDate, totalAmount));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        customerAdapter.updateList(customerList);
+                        customerAdapter.updateList(customerList); // Populate the adapter initially
+                        filteredList.addAll(customerList); // Initialize filtered list with all customers
                         Toast.makeText(getContext(), "Customers Loaded: " + customerList.size(), Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
@@ -114,12 +134,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void filterCustomers(String query) {
-        List<Customer> filteredList = new ArrayList<>();
+        List<Customer> filtered = new ArrayList<>();
         for (Customer customer : customerList) {
             if (customer.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(customer);
+                filtered.add(customer);
             }
         }
-        customerAdapter.updateList(filteredList);
+        filteredList.clear(); // Clear the filtered list
+        filteredList.addAll(filtered); // Add filtered items
+        customerAdapter.updateList(filteredList); // Update the adapter with filtered list
     }
 }

@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +28,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class AddCarActivity extends AppCompatActivity {
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Customerphp/add_car.php";
+    private String pathurl= "http://172.19.33.18";
+    private final String BASE_URL = pathurl+"/public_html/Android/Customerphp/add_car.php";
     private int customerId;  // To hold the customer ID
     private Uri selectedImageUri;  // To hold the URI of the selected image
 
-    private EditText licensePlateInput, modelInput, makeInput, yearInput, odometerInput, engineInput, transmissionInput, companyInput, carsNameInput;
+    private EditText licensePlateInput, modelInput, makeInput, yearInput, odometerInput, engineInput, companyInput, carsNameInput;
+    private Spinner transmissionInput;
     private ImageView addPhoto;
 
     private final ActivityResultLauncher<Intent> imagePickerLauncher =
@@ -61,12 +65,16 @@ public class AddCarActivity extends AppCompatActivity {
         yearInput = findViewById(R.id.yearInput);
         odometerInput = findViewById(R.id.odometerInput);
         engineInput = findViewById(R.id.engineInput);
-        transmissionInput = findViewById(R.id.transmissionInput);
+        transmissionInput = findViewById(R.id.transmissionSpinner);
         companyInput = findViewById(R.id.companyInput);
         carsNameInput = findViewById(R.id.nameInput);
         addPhoto = findViewById(R.id.add_photo);
 
         Button saveButton = findViewById(R.id.add_car_button);
+        String[] transmissionOptions = {"Automatic", "Manual"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, transmissionOptions);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        transmissionInput.setAdapter(adapter);
         saveButton.setOnClickListener(v -> saveCarData());
 
         addPhoto.setOnClickListener(v -> openImageChooser());
@@ -86,7 +94,7 @@ public class AddCarActivity extends AppCompatActivity {
         String year = yearInput.getText().toString().trim();
         String odometer = odometerInput.getText().toString().trim();
         String engineSpecification = engineInput.getText().toString().trim();
-        String transmission = transmissionInput.getText().toString().trim();
+        String transmission = transmissionInput.getSelectedItem().toString().trim();
         String company = companyInput.getText().toString().trim();
         String carsName = carsNameInput.getText().toString().trim();
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,30 +32,39 @@ public class Login extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/login.php";
+    private String pathurl;
+
+    private final String BASE_URLT = "/public_html/Android/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        pathurl = getString(R.string.url);
+        String BASE_URL = pathurl + BASE_URLT;
 
         usernameEditText = findViewById(R.id.edttext1);
         passwordEditText = findViewById(R.id.edttext2);
         loginButton = findViewById(R.id.button);
+        TextView createAccountTextView = findViewById(R.id.create_account_text);
+        createAccountTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(Login.this, Registration.class);
+            startActivity(intent);
+        });
 
         loginButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
             if (!username.isEmpty() && !password.isEmpty()) {
-                loginUser(username, password); // Call login method
+                loginUser(username, password, BASE_URL); // Call login method
             } else {
                 Toast.makeText(Login.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void loginUser(String username, String password) {
+    private void loginUser(String username, String password, String BASE_URL) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BASE_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -71,42 +81,53 @@ public class Login extends AppCompatActivity {
                             Log.d("Role", role); // Log the role to see if it's coming correctly
 
                             if ("Admin".equalsIgnoreCase(role)) {
-                                int adminId = jsonResponse.optInt("admin_id", -1); // Get the admin_id from the response
+                                int adminId = jsonResponse.optInt("admin_id", -1);
+                                int userId=jsonResponse.optInt("user_id", -1);
                                 if (adminId != -1) {
                                     // Admin role, navigate to Admin activity
                                     Toast.makeText(Login.this, "Welcome, Admin", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(Login.this, Admin.class);
                                     intent.putExtra("admin_id", adminId); // Pass the admin_id to AdminActivity
+                                    intent.putExtra("user_id", userId);// Pass customer_id to HomeActivity
+                                    intent.putExtra("role", role);
                                     startActivity(intent);
                                     finish();
                                 }
                             } else if ("Customer".equalsIgnoreCase(role)) {
                                 int customerId = jsonResponse.optInt("customer_id", -1);
+                                int userId=jsonResponse.optInt("user_id", -1);
                                 if (customerId != -1) {
                                     // Customer role, navigate to Customer activity
                                     Toast.makeText(Login.this, "Welcome, Customer", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(Login.this, CustomerActivity.class);
-                                    intent.putExtra("customer_id", customerId); // Pass customer_id to HomeActivity
+                                    intent.putExtra("customer_id", customerId);
+                                    intent.putExtra("user_id", userId);
+                                    intent.putExtra("role", role);
                                     startActivity(intent);
                                     finish();
                                 }
                             } else if ("Employee".equalsIgnoreCase(role)) {
                                 int employeeId = jsonResponse.optInt("employee_id", -1);
+                                int userId=jsonResponse.optInt("user_id", -1);
                                 if (employeeId != -1) {
                                     // Save employee ID in SharedPreferences
                                     SharedPreferences sharedPreferences = getSharedPreferences("RepairApp", MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putInt("employee_id", employeeId);
+                                    editor.putInt("user_id", userId);
+                                    editor.putString("role", role);
                                     editor.apply();
 
                                     // Navigate to dashboard
                                     Intent intent = new Intent(Login.this, dashboard.class);
                                     intent.putExtra("employee_id", employeeId);
+                                    intent.putExtra("user_id", userId);
+                                    intent.putExtra("role", role);
                                     startActivity(intent);
                                     finish();
                                 }
                             } else {
-                                Toast.makeText(Login.this, "Role not recognized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Wrong Entry", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             Log.e("LoginActivity", "JSON Parsing error: " + e.getMessage());

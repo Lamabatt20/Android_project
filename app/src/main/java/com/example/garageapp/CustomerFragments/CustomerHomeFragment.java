@@ -41,12 +41,12 @@ public class CustomerHomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private CarAdapter adapter;
     private int customerId;
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Customerphp/car.php";
+    private final static String BASE_URL = "http://172.19.33.18/public_html/Android/Customerphp/car.php";
     private ActivityResultLauncher<Intent> addCarActivityLauncher;
     private ImageView imageno;
     private TextView text;
 
-    @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_customer_home, container, false);
@@ -64,8 +64,14 @@ public class CustomerHomeFragment extends Fragment {
 
         adapter = new CarAdapter(getContext(), items, position -> {
             Car selectedCar = items.get(position);
+            String photourl=selectedCar.getPhoto();
+            if(photourl.startsWith("/")){
+                photourl=getString(R.string.url) + selectedCar.getPhoto();
+            }
             Intent intent = new Intent(getContext(), CarDetails.class);
             intent.putExtra("car_id", String.valueOf(selectedCar.getCarId()));
+            intent.putExtra("car_photo",photourl);
+            intent.putExtra("cars_name",selectedCar.getCars_name());
             Log.d("CarSelection", selectedCar.getCarId() + "");
             startActivity(intent);
         });

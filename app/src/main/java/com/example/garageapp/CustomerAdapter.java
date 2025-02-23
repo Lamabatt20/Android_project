@@ -1,16 +1,13 @@
 package com.example.garageapp;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
@@ -26,6 +23,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         this.listener = listener;
     }
 
+    @NonNull
     @Override
     public CustomerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customer_card, parent, false);

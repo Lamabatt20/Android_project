@@ -61,8 +61,9 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.glide)
-    implementation("com.android.support:recyclerview-v7:28.0.0")
-    implementation("com.android.support:cardview-v7:28.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
+    implementation("androidx.cardview:cardview:1.0.0")
+
 
     annotationProcessor(libs.compiler)
 }

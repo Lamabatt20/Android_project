@@ -9,26 +9,31 @@
     tools:context=".Fragments.OrderDetail">
 
     <!-- Toolbar with Logo and Title -->
+
+    <!-- Customer Information Card -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:background="#CAC7C7"
         android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="20dp">
+        tools:layout_editor_absoluteX="0dp">
 
         <!-- Back Button -->
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="Back Button"
             android:src="?attr/actionModeCloseDrawable"
-            app:tint="#194C77" />
+            app:tint="#194C77"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
 
         <!-- Logo -->
         <ImageView
@@ -53,7 +58,6 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Customer Information Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/customerCard1"
         android:layout_width="0dp"

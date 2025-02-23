@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,7 @@ public class CustomerProfileFragment extends Fragment {
     }
 
     private void loadUserProfile(int userId, String role) {
-        String url = "http://10.0.2.2/public_html/Android/Customerphp/getUserProfile.php?user_id=" + userId;
+        String url = "http://172.19.33.18/public_html/Android/Customerphp/getUserProfile.php?user_id=" + userId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -99,6 +100,10 @@ public class CustomerProfileFragment extends Fragment {
                             usernameEditText.setText(username);
                             emailEditText.setText(email);
                             phoneNumberEditText.setText(phone);
+
+                            if (imageUrl.startsWith("/")) {
+                                imageUrl = "http://172.19.33.18" + imageUrl;
+                            }
 
                             Glide.with(getContext())
                                     .load(imageUrl)
@@ -132,10 +137,15 @@ public class CustomerProfileFragment extends Fragment {
         if (requestCode == 1 && resultCode == getActivity().RESULT_OK && data != null) {
             selectedImageUri = data.getData();
             if (selectedImageUri != null) {
-                Glide.with(this)
-                        .load(selectedImageUri)
-                        .placeholder(R.drawable.user_placeholder)
-                        .into(userImageView);
+
+                String imageUrl = selectedImageUri.toString();
+                if (imageUrl.startsWith("content://")) {
+
+                    Glide.with(this)
+                            .load(selectedImageUri)
+                            .placeholder(R.drawable.user_placeholder)
+                            .into(userImageView);
+                }
             }
         }
     }
@@ -148,10 +158,9 @@ public class CustomerProfileFragment extends Fragment {
 
         String imageUrl = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/updateUserProfile.php";
+        String url = "http://172.19.33.18/public_html/Android/Customerphp/UpdateUserProfile.php";
 
         try {
-
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_id", userId);
             jsonBody.put("username", updatedUsername);
@@ -169,13 +178,11 @@ public class CustomerProfileFragment extends Fragment {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                boolean success = response.getBoolean("success");
-                                if (success) {
-                                    Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    String message = response.getString("message");
-                                    Toast.makeText(getContext(), "Failed to update: " + message, Toast.LENGTH_SHORT).show();
-                                }
+                                Log.d("UpdateResponse", "Response: " + response.toString());  // Log the response for debugging
+
+                                String successMessage = response.getString("success");  // Get the success message
+                                Toast.makeText(getContext(), successMessage, Toast.LENGTH_SHORT).show();  // Show the success message
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), "Response parsing error", Toast.LENGTH_SHORT).show();

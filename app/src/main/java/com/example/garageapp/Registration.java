@@ -34,6 +34,7 @@ public class Registration extends AppCompatActivity {
     EditText edtAuthorization;
     Button btnNext;
     TextView txtLogin;
+    private String pathurl= "http://172.19.33.18";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class Registration extends AppCompatActivity {
     }
 
     private void validateAuthorizationCode(String authorization, Consumer<Boolean> callback) {
-        String url = "http://172.19.33.199/public_html/Android/validate_auth_code.php";
+        String url = pathurl+"/public_html/Android/validate_auth_code.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

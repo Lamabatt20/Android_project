@@ -38,6 +38,7 @@ public class dashboard extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putInt("user_id",userId);
+        bundle.putInt("user_id",userId);
         bundle.putString("role",role);
         profileFragment.setArguments(bundle);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

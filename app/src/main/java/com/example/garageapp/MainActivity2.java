@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ public class MainActivity2 extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //create a toast message for the user
+        String pathurl = getString(R.string.url);
         loginbtn = findViewById(R.id.button2);
         registerbtn = findViewById(R.id.button1);
         registerbtn.setOnClickListener(new View.OnClickListener() {

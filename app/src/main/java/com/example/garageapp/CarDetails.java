@@ -1,7 +1,9 @@
 package com.example.garageapp;
 
-
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +27,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class CarDetails extends AppCompatActivity {
     public static LinearLayout upcoming_layout, upcoming;
     public static TextView toolbar_title;
@@ -32,6 +38,9 @@ public class CarDetails extends AppCompatActivity {
     private ImageView carImage;
     public static String carID, carName;
     Button selectNewServiceButton;
+    private String pathurl= "http://172.19.33.18";
+
+    private static final int REQUEST_CODE = 1; // Define the request code for permission
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +60,15 @@ public class CarDetails extends AppCompatActivity {
         upcoming_layout = findViewById(R.id.upcoming_layout);
 
         carID = getIntent().getStringExtra("car_id");
-        Log.d("======***=========", carID+"");
+        Log.d("======***=========", carID + "");
         if (carID == null || carID.isEmpty()) {
             Toast.makeText(this, "Car ID is missing!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
+        // Check for storage permission
+        checkStoragePermission();
 
         fetchCarData(carID);
 
@@ -67,8 +79,30 @@ public class CarDetails extends AppCompatActivity {
         });
     }
 
+    // Check if the app has storage permission
+    private void checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, you can access storage
+            } else {
+                // Permission denied, notify the user
+                Toast.makeText(this, "Storage permission is required to load images", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void fetchCarData(String carNumber) {
-        String url = "http://10.0.2.2//public_html/Android/Customerphp/get_car.php?car_number=" + carNumber;
+        String url = pathurl+"/public_html/Android/Customerphp/get_car.php?car_number=" + carNumber;
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -79,19 +113,25 @@ public class CarDetails extends AppCompatActivity {
                             return;
                         }
 
-                        carName = response.getString("company");
+                        carName = response.getString("cars_name");
                         toolbar_title.setText(carName);
                         carModel.setText(response.getString("model"));
+                        String carPhotoUrl = getIntent().getStringExtra("car_photo");
                         carEngine.setText(response.getString("engine_specification"));
                         carYear.setText(response.getString("year"));
                         carOdometer.setText(response.getString("odometer"));
                         carTransmission.setText(response.getString("transmission"));
 
+                        // Load car image using Glide after checking permission
+                        Glide.with(CarDetails.this)
+                                .load(carPhotoUrl)
+                                .into(carImage);
+
                         JSONArray historyArray = response.getJSONArray("history");
                         for (int i = 0; i < historyArray.length(); i++) {
                             JSONObject historyItem = historyArray.getJSONObject(i);
                             history.append("- " + historyItem.getString("notes") +
-                                    "   Done with date   " + historyItem.getString("date") + "\n");
+                                    "   Done with date " + historyItem.getString("date") + "\n");
                         }
 
                         JSONArray servicesArray = response.getJSONArray("services");
@@ -102,9 +142,6 @@ public class CarDetails extends AppCompatActivity {
                             String orderID = serviceItem.getString("order_id");
                             addServiceButton(note, orderID);
                         }
-
-                        String imageUrl = "http://192.168.1.102/" + response.getString("photo");
-                        Glide.with(CarDetails.this).load(imageUrl).into(carImage);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -130,15 +167,26 @@ public class CarDetails extends AppCompatActivity {
         upcoming_layout.addView(serviceButton);
 
         serviceButton.setOnClickListener(v -> {
-            upcoming_layout.removeView(serviceButton);
-            upcoming.removeView(textView);
 
-            deleteServiceFromDatabase(orderID);
+            new AlertDialog.Builder(CarDetails.this)
+                    .setTitle("Delete Service")
+                    .setMessage("Are you sure you want to delete this Service?")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            upcoming_layout.removeView(serviceButton);
+                            upcoming.removeView(textView);
+                            deleteServiceFromDatabase(orderID);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
+                    .show();
+
         });
     }
 
     private void deleteServiceFromDatabase(String orderID) {
-        String url = "http://172.19.33.199/public_html/Android/Customerphp/delete_service.php";
+        String url = pathurl+"/public_html/Android/Customerphp/delete_service.php";
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject jsonParams = new JSONObject();
 
@@ -171,4 +219,3 @@ public class CarDetails extends AppCompatActivity {
         queue.add(request);
     }
 }
-

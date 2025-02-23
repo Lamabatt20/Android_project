@@ -23,12 +23,14 @@
         <!-- Back Button -->
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="Back Button"
             android:src="?attr/actionModeCloseDrawable"
-            app:tint="#194C77" />
+            app:tint="#194C77"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
 
         <!-- Logo -->
         <ImageView

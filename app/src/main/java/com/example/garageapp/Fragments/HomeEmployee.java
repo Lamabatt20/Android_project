@@ -1,8 +1,9 @@
 package com.example.garageapp.Fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,28 +23,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.garageapp.Customer;
 import com.example.garageapp.CustomerAdapter;
 import com.example.garageapp.R;
-import com.example.garageapp.ServiceActivity;
-
-import java.util.ArrayList;
-import java.util.List;
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.example.garageapp.Customer;
-import com.example.garageapp.CustomerAdapter;
-import com.example.garageapp.R;
-import com.example.garageapp.ServiceActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,8 +36,9 @@ public class HomeEmployee extends Fragment {
     private RecyclerView recyclerView;
     private CustomerAdapter customerAdapter;
     private List<Customer> customerList;
+    private List<Customer> filteredList; // For filtered customers
     private EditText searchBar;
-    private Button addServiceButton;
+    private String urlpath = "http://172.19.33.18"; // Adjust URL as needed
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,11 +52,18 @@ public class HomeEmployee extends Fragment {
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customerList = new ArrayList<>();
-        customerAdapter = new CustomerAdapter(customerList, position -> {
+        filteredList = new ArrayList<>(); // Initialize filtered list
+        customerAdapter = new CustomerAdapter(filteredList, position -> {
             // Handle item click to navigate to OrderDetail
-            Customer clickedCustomer = customerList.get(position);
+            Customer clickedCustomer = filteredList.get(position); // Get customer from filtered list
             Intent intent = new Intent(getActivity(), OrderDetail.class);
             intent.putExtra("customer_id", clickedCustomer.getId()); // Pass customer_id
+            intent.putExtra("order_id", clickedCustomer.getOrderId());
+            intent.putExtra("service_id", clickedCustomer.getServiceId());
+            intent.putExtra("state", clickedCustomer.getState());
+            intent.putExtra("states_date", clickedCustomer.getStatesDate());
+            intent.putExtra("order_date", clickedCustomer.getOrderDate());
+            intent.putExtra("total_amount", clickedCustomer.getTotalAmount());
             startActivity(intent);
         });
         recyclerView.setAdapter(customerAdapter);
@@ -84,7 +72,7 @@ public class HomeEmployee extends Fragment {
         fetchCustomerData();
 
         // Set up search bar listener
-        searchBar.addTextChangedListener(new android.text.TextWatcher() {
+        searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
 
@@ -94,14 +82,14 @@ public class HomeEmployee extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(android.text.Editable editable) {}
+            public void afterTextChanged(Editable editable) {}
         });
 
         return view;
     }
 
     private void fetchCustomerData() {
-        String url = "http://172.19.33.199/public_html/Android/dashboard.php";
+        String url = urlpath + "/public_html/Android/dashboard.php";
 
         RequestQueue queue = Volley.newRequestQueue(requireContext());
 
@@ -116,12 +104,20 @@ public class HomeEmployee extends Fragment {
                                 int customerId = order.getInt("customer_id");
                                 String customerName = order.getString("customer_name");
                                 String serviceName = order.getString("service_name");
-                                customerList.add(new Customer(customerId, customerName, serviceName));
+                                int orderId = order.getInt("order_id");
+                                int serviceId = order.getInt("service_id");
+                                String state = order.getString("state");
+                                String statesDate = order.getString("states_date");
+                                String orderDate = order.getString("order_date");
+                                double totalAmount = order.getDouble("total_amount");
+
+                                customerList.add(new Customer(customerId, customerName, serviceName, orderId, serviceId, state, statesDate, orderDate, totalAmount));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        customerAdapter.updateList(customerList);
+                        filteredList.addAll(customerList); // Initially display all customers
+                        customerAdapter.updateList(filteredList); // Update RecyclerView with initial data
                         Toast.makeText(getContext(), "Customers Loaded: " + customerList.size(), Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
@@ -132,14 +128,14 @@ public class HomeEmployee extends Fragment {
     }
 
     private void filterCustomers(String query) {
-        List<Customer> filteredList = new ArrayList<>();
+        List<Customer> filtered = new ArrayList<>();
         for (Customer customer : customerList) {
             if (customer.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(customer);
+                filtered.add(customer);
             }
         }
-        customerAdapter.updateList(filteredList);
+        filteredList.clear(); // Clear the previous filtered list
+        filteredList.addAll(filtered); // Add the filtered customers to the list
+        customerAdapter.updateList(filteredList); // Update the RecyclerView adapter
     }
-
-
 }

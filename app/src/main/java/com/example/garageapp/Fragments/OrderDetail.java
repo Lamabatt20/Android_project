@@ -2,6 +2,8 @@ package com.example.garageapp.Fragments;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
@@ -27,12 +29,21 @@ public class OrderDetail extends AppCompatActivity {
     private TextView serviceIdTextView;
     private TextView employeeid;
     private int customerId;
+    private int orderId;
+    private int serviceId;
+    private String state;
+    private  String statesDate;
+    private String orderDate;
+    private double totalAmount;
+    private String pathurl= "http://172.19.33.18";
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_order_detail);
+
 
         // Initialize the TextViews from XML layout
         customerNameTextView = findViewById(R.id.customerNameTextView);
@@ -43,9 +54,20 @@ public class OrderDetail extends AppCompatActivity {
         stateTextView = findViewById(R.id.stateTextView);
         serviceIdTextView = findViewById(R.id.serviceIdTextView);
         employeeid = findViewById(R.id.employeeid);
+        imageView = findViewById(R.id.back_button);
+
+        imageView.setOnClickListener(v -> {
+            finish();
+        });
 
         // Retrieve the customer ID passed via intent
         customerId = getIntent().getIntExtra("customer_id", -1);
+        orderId = getIntent().getIntExtra("order_id", -1);
+        serviceId= getIntent().getIntExtra("service_id", -1);
+        state = getIntent().getStringExtra("state");
+        statesDate = getIntent().getStringExtra("states_date");
+        orderDate = getIntent().getStringExtra("order_date");
+        totalAmount = getIntent().getDoubleExtra("total_amount", 0.0);
 
         if (customerId != -1) {
             fetchOrderDetails(customerId);
@@ -56,7 +78,7 @@ public class OrderDetail extends AppCompatActivity {
 
     private void fetchOrderDetails(int customerId) {
         // URL of the PHP endpoint that returns order details for the given customer ID
-        String url = "http://172.19.33.199/public_html/Android/detaileddashboard.php?customer_id=" + customerId;
+        String url = pathurl+"/public_html/Android/detaileddashboard.php?customer_id=" + customerId;
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -77,12 +99,7 @@ public class OrderDetail extends AppCompatActivity {
                                 // Extract data from the response
                                 String customerName = order.getString("customer_name");
                                 String phoneNumber = order.getString("phone_number");
-                                int orderId = order.getInt("order_id");
-                                String orderDate = order.getString("order_date");
-                                double totalAmount = order.getDouble("total_amount");
-                                String state = order.getString("state");
-                                int serviceId = order.getInt("service_id");
-                                String statesDate = order.getString("states_date");
+
 
                                 // Update the UI with the order details
                                 customerNameTextView.setText("Customer Name: " + customerName);

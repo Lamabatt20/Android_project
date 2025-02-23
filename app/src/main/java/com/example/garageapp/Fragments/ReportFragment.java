@@ -1,5 +1,6 @@
 package com.example.garageapp.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,11 +36,14 @@ public class ReportFragment extends Fragment {
     private TextView txtProfit;
     private TextView txtCustomerOfTheMonth;
     private TextView txtEmployeeOfTheMonth;
+    private String pathurl= "http://172.19.33.18";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_report, container, false);
+
+
 
         // Initialize the TextViews
         txtNumberOfCustomers = rootView.findViewById(R.id.txtNumberOfCustomers);
@@ -52,11 +56,27 @@ public class ReportFragment extends Fragment {
         // Fetch data using Volley
         fetchData();
 
+        txtNumberOfCustomers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AllCustomers.class);
+            }
+        });
+
+        txtNumberOfEmployees.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AllEmployees.class);
+                startActivity(intent);
+
+            }
+        });
+
         return rootView;
     }
 
     private void fetchData() {
-        String url = "http://172.19.33.199/public_html/Android/report.php";
+        String url = pathurl+"/public_html/Android/report.php";
 
         // Initialize Volley request queue
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
@@ -81,8 +101,20 @@ public class ReportFragment extends Fragment {
                             String customerName = topCustomer.getString("customer_name");
                             String customerPhotoUrl = topCustomer.getString("photo");
                             int customerOrders = topCustomer.getInt("total_orders");
-                            String fullImageUrl = "http://172.19.33.199" + employeePhotoUrl;
-                            String fullImageUrl2 = "http://172.19.33.199" + customerPhotoUrl;
+                            String fullImageUrl2 = customerPhotoUrl;
+                            String fullImageUrl = employeePhotoUrl;
+
+                            if (fullImageUrl.startsWith("/")) {
+                                fullImageUrl = pathurl + employeePhotoUrl;
+                            }
+
+                            if (fullImageUrl2.startsWith("/")) {
+                                fullImageUrl2 = pathurl + customerPhotoUrl;
+                            }
+
+
+
+
 
                             // Parse general details
                             int totalCustomers = response.getInt("total_customers");

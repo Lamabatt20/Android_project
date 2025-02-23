@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 
 public class ProfileFragment extends Fragment {
 
+
     private ImageView userImageView;
     private EditText usernameEditText;
     private EditText emailEditText;
@@ -39,6 +41,8 @@ public class ProfileFragment extends Fragment {
     private Button updateButton;
     private Uri selectedImageUri;
     private ImageView logoutIcon;
+    private String pathurl= "http://172.19.33.18";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,7 +83,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadUserProfile(int userId, String role) {
-        String url = "http://172.19.33.199/public_html/android/customerphp/getUserProfile.php?user_id=" + userId;
+        // The URL that will get the user profile including image URL
+        String url = pathurl+"/public_html/Android/Customerphp/getUserProfile.php?user_id=" + userId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -91,37 +96,58 @@ public class ProfileFragment extends Fragment {
                             String username = userJson.getString("username");
                             String email = userJson.getString("email");
                             String phone = userJson.getString("phone_number");
-                            String imageUrl = userJson.getString("photo");
+                            String imageUrl = userJson.getString("photo");  // Image URL from the server
                             String authCode = userJson.getString("authentication_code_id");
 
+                            // Set values to the EditText fields
                             usernameEditText.setText(username);
                             emailEditText.setText(email);
                             phoneNumberEditText.setText(phone);
 
-                            Glide.with(getContext())
-                                    .load(imageUrl)
-                                    .placeholder(R.drawable.user_placeholder)
-                                    .into(userImageView);
+                            if (imageUrl.startsWith("/")) {
+                                imageUrl = pathurl + imageUrl;
+                            }
 
+
+
+
+                            // Check if the image URL is not empty and load it using Glide
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                Glide.with(getContext())
+                                        .load(imageUrl)  // Load the image from the URL returned by the server
+                                        .placeholder(R.drawable.user_placeholder)  // Placeholder image
+                                        .error(R.drawable.user_placeholder)  // Fallback in case of error
+                                        .into(userImageView);// Set the image to the ImageView
+                            } else {
+                                // Fallback in case image URL is invalid or empty
+                                userImageView.setImageResource(R.drawable.user_placeholder);
+                            }
+
+                            // Show authentication code for Admin role
                             if ("Admin".equals(role)) {
                                 authenticationCodeEditText.setVisibility(View.VISIBLE);
                                 authenticationCodeEditText.setText(authCode);
                             } else {
                                 authenticationCodeEditText.setVisibility(View.GONE);
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(getContext(), "Error parsing profile data", Toast.LENGTH_SHORT).show();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "Error loading profile", Toast.LENGTH_SHORT).show();
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error loading profile", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
+        // Add the request to the Volley queue
         Volley.newRequestQueue(getContext()).add(stringRequest);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,10 +172,11 @@ public class ProfileFragment extends Fragment {
 
         String imageUrl = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        String url = "http://172.19.33.199/public_html/android/customerphp/updateUserProfile.php";
+        String url = pathurl+"/public_html/Android/Customerphp/UpdateUserProfile.php";
+
+
 
         try {
-
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_id", userId);
             jsonBody.put("username", updatedUsername);
@@ -167,13 +194,11 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                boolean success = response.getBoolean("success");
-                                if (success) {
-                                    Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    String message = response.getString("message");
-                                    Toast.makeText(getContext(), "Failed to update: " + message, Toast.LENGTH_SHORT).show();
-                                }
+                                Log.d("UpdateResponse", "Response: " + response.toString());  // Log the response for debugging
+
+                                String successMessage = response.getString("success");  // Get the success message
+                                Toast.makeText(getContext(), successMessage, Toast.LENGTH_SHORT).show();  // Show the success message
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), "Response parsing error", Toast.LENGTH_SHORT).show();

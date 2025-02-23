@@ -65,7 +65,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="951dp"
+            android:layout_marginBottom="90dp"
             android:layout_weight="1"
             android:padding="8dp"
             tools:listitem="@layout/notification_item" />

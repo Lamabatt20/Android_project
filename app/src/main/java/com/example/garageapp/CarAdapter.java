@@ -14,10 +14,12 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
-
     private final List<Car> carList;
     private final Context context;
     private final OnItemClickListener onItemClickListener;
+    private String pathurl= "http://172.19.33.18";
+
+
 
 
     public interface OnItemClickListener {
@@ -46,12 +48,14 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     @Override
     public void onBindViewHolder(CarViewHolder holder, int position) {
         Car car = carList.get(position);
-
-        Log.d("CarAdapter", "Binding car: " + car.getCars_name() + ", Photo: " + car.getPhoto());
+        String fullImageUrl =car.getPhoto();
+        if(fullImageUrl.startsWith("/")){
+            fullImageUrl= pathurl+ car.getPhoto();
+        }
 
         // Bind data to views
         Glide.with(context)
-                .load(car.getPhoto())
+                .load(fullImageUrl)
                 .into(holder.carImageView);
 
         holder.carNameTextView.setText(car.getCars_name());

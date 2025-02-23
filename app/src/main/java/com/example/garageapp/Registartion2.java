@@ -1,5 +1,6 @@
 package com.example.garageapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,6 +31,8 @@ public class Registartion2 extends AppCompatActivity {
     private TextInputEditText edtUsername, edtIdentity, edtPassword, edtPassword2;
     private Button btnCreateAccount;
     private TextView txtLogin;
+    private String pathurl= "http://172.19.33.18";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,12 +72,28 @@ public class Registartion2 extends AppCompatActivity {
 
             // Validate input
             if (username.isEmpty() || identity.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(Registartion2.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(Registartion2.this)
+                        .setTitle("Error")
+                        .setMessage("Please fill in all fields.")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .show();
                 return;
             }
 
             if (!password.equals(confirmPassword)) {
-                Toast.makeText(Registartion2.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(Registartion2.this)
+                        .setTitle("Error")
+                        .setMessage("Passwords do not match.")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .show();
                 return;
             }
 
@@ -93,7 +113,7 @@ public class Registartion2 extends AppCompatActivity {
 
     private void registerUser(String name, String email, String phone, String authorization, String role,
                               String username, String identity, String password) {
-        String url = "http://172.19.33.199/public_html/Android/register.php";  // Adjust the URL as needed
+        String url = pathurl+"/public_html/Android/register.php";  // Adjust the URL as needed
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);

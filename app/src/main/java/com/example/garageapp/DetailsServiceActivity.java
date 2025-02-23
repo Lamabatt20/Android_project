@@ -35,6 +35,8 @@ public class DetailsServiceActivity extends AppCompatActivity {
     private Button add_service_button;
     private ImageButton DateButton;
     private static String carID, serviceName;
+    private String urlpath ="http://172.19.33.18";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
     }
 
     private void fetchServiceDetails(String serviceName) {
-        String url = "http://10.0.2.2/public_html/Android/Customerphp/get_service_details.php?service_name=" + serviceName;
+        String url = urlpath+"/public_html/Android/Customerphp/get_service_details.php?service_name=" + serviceName;
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -91,7 +93,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
     }
 
     private void addServiceToDatabase(String Tarekh, String note, String carID, String price, String estimatedTime, String serviceName) {
-        String url = "http://10.0.2.2/public_html/Android/Customerphp/add_service.php";
+        String url = urlpath+"/public_html/Android/Customerphp/add_service.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -112,7 +114,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
                     try {
                         String result = response.getString("result");
                         if (result.equals("success")) {
-                            String orderID = response.getString("order_id"); // الحصول على order_id الجديد
+                            String orderID = response.getString("order_id");
                             Toast.makeText(DetailsServiceActivity.this, "Order added successfully. Order ID: " + orderID, Toast.LENGTH_SHORT).show();
                             Log.d("OrderID", "New Order ID: " + orderID);
                             String noteee=("- " +serviceName +
@@ -193,7 +195,7 @@ public class DetailsServiceActivity extends AppCompatActivity {
 
     }
     private void deleteServiceFromDatabase(String order_id) {
-        String url = "http://10.0.2.2/public_html/Android/Customerphp/delete_service.php";
+        String url = urlpath+"/public_html/Android/Customerphp/delete_service.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

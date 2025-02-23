@@ -32,7 +32,7 @@ public class NotficationFragment extends Fragment {
     private NotificationAdapter adapter;
     private List<NotificationItem> notificationList;
     private TextView emptyMessage;
-
+    private String pathurl= "http://172.19.33.18";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class NotficationFragment extends Fragment {
     }
 
     private void fetchNotifications() {
-        String url = "http://172.19.33.199/public_html/Android/notification.php";
+        String url = pathurl+"/public_html/Android/notification.php";
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
@@ -72,9 +72,9 @@ public class NotficationFragment extends Fragment {
 
                             NotificationItem item = new NotificationItem(orderId, orderDate, description, state, carId, model,carName);
                             notificationList.add(item);
-                            
-                            
-                        }    
+
+
+                        }
                         if (notificationList.isEmpty()) {
                             // Handle empty notification list, e.g., show a message or hide RecyclerView
                             recyclerView.setVisibility(View.GONE);
@@ -83,7 +83,7 @@ public class NotficationFragment extends Fragment {
                         } else {
                             adapter.notifyDataSetChanged();
                         }
-                   
+
                     } catch (Exception e) {
                         Log.e("NotificationFragment", "Error parsing notifications", e);
                     }

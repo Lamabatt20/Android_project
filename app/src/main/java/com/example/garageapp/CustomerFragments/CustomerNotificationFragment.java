@@ -1,5 +1,6 @@
 package com.example.garageapp.CustomerFragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,12 +36,9 @@ public class CustomerNotificationFragment extends Fragment {
     private CustomerNotificationAdapter notificationAdapter;
     private List<Order> orders = new ArrayList<>();
     private RequestQueue requestQueue;
-    private static final String BASE_URL = "http://172.19.33.199/public_html/Android/Cutomerphp/Notification.php";
+    private static final String BASE_URL = "http://172.19.33.18/public_html/Android/Customerphp/Notification.php";
     private int customerId;
 
-    public CustomerNotificationFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,38 +46,43 @@ public class CustomerNotificationFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_customer_notification, container, false);
 
-        // Getting customer ID from the arguments
-        if (getArguments() != null) {
-            customerId = getArguments().getInt("customer_id", -1);
-        }
-
-        if (customerId == -1) {
-            Toast.makeText(getContext(), "Invalid customer ID", Toast.LENGTH_SHORT).show();
-            return rootView;
-        }
-
         // Initialize RecyclerView
         notificationRecyclerView = rootView.findViewById(R.id.reminders_list_recycler_view);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize order list and RequestQueue
-        requestQueue = Volley.newRequestQueue(getContext());
+        notificationAdapter = new CustomerNotificationAdapter(getContext(), orders);
+        notificationRecyclerView.setAdapter(notificationAdapter);
 
-        // Load orders
-        loadItems(rootView);
+        // Getting customer ID from the arguments
+        if (getArguments() != null) {
+            customerId = getArguments().getInt("customer_id", -1);
+            if (customerId != -1) {
+                // Load orders if valid customer ID
+                if (orders.isEmpty()) {  // Only load if orders are empty
+                    loadItems(rootView);
+                } else {
+                    updateUI(rootView);  // Skip loading if data is already available
+                }
+            } else {
+                Toast.makeText(getContext(), "Invalid customer ID", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         return rootView;
     }
 
     private void loadItems(View rootView) {
+        // Clear the orders list before adding new data
+        orders.clear();
+
         String url = BASE_URL + "?customer_id=" + customerId;
 
-        // Create a StringRequest to make a GET request
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
+                            // Process response and add to orders list
                             JSONArray array = new JSONArray(response);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object = array.getJSONObject(i);
@@ -97,21 +100,29 @@ public class CustomerNotificationFragment extends Fragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        updateUI(rootView);
+
+                        // Make sure updateUI is run on the main thread
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateUI(rootView);  // Update RecyclerView after loading data
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Log the error response
                         Log.e("CustomerNotificationFragment", "Error: " + error.toString());
                         Toast.makeText(getContext(), "Failed to load orders", Toast.LENGTH_LONG).show();
                     }
                 });
 
-        // Add the request to the RequestQueue
+        // Add the request to the Volley queue
+        requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
 
     private void updateUI(View rootView) {
         ImageView noDataImage = rootView.findViewById(R.id.no_data_image);
@@ -126,13 +137,9 @@ public class CustomerNotificationFragment extends Fragment {
             noDataImage.setVisibility(View.GONE);
             text.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            notificationAdapter.notifyDataSetChanged();
 
-            if (notificationAdapter == null) {
-                notificationAdapter = new CustomerNotificationAdapter(getContext(), orders);
-                recyclerView.setAdapter(notificationAdapter);
-            } else {
-                notificationAdapter.notifyDataSetChanged();
-            }
+
         }
     }
 }

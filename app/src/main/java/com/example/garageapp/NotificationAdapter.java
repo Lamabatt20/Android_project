@@ -32,6 +32,7 @@ import java.util.Map;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
     private List<NotificationItem> notificationList;
     private Context context;
+    private String pathurl= "http://172.19.33.18";
 
     public NotificationAdapter(Context context, List<NotificationItem> notificationList) {
         this.context = context;
@@ -50,6 +51,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         NotificationItem item = notificationList.get(position);
         holder.tvDescription.setText(item.getDescription());
         holder.tvCarModel.setText("Car: " + item.getModel());
+        holder.tvCarName.setText("Car Name: " + item.getCarName());
         holder.tvOrderDate.setText("Order Date: " + item.getOrderDate());
 
         // Initialize CheckBox state
@@ -70,7 +72,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private void markOrderAsComplete(int orderId, NotificationViewHolder holder) {
-        String url = "http://172.19.33.199/public_html/Android/updateOrder.php";
+        String url = pathurl+"/public_html/Android/updateOrder.php";
 
         // Retrieve employee_id from SharedPreferences
         SharedPreferences sharedPreferences = context.getSharedPreferences("RepairApp", Context.MODE_PRIVATE);
@@ -137,13 +139,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDescription, tvCarModel, tvOrderDate;
+        TextView tvDescription, tvCarModel, tvOrderDate, tvCarName;
         CheckBox cbComplete;
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvCarModel = itemView.findViewById(R.id.tvCarModel);
+            tvCarName = itemView.findViewById(R.id.tvCarName);
             tvOrderDate = itemView.findViewById(R.id.tvOrderDate);
             cbComplete = itemView.findViewById(R.id.cbComplete); // Initialize CheckBox
         }
